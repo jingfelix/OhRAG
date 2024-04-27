@@ -1,0 +1,12 @@
+version: '2'
+services:
+  pg:
+    image: postgres:alpine
+    volumes:
+      - ./data/pg:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ohrag
+      POSTGRES_PASSWORD: ohrag
+      POSTGRES_DB: ohrag
+    ports:
+      - 25432:5432
