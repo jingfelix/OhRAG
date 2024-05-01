@@ -25,7 +25,10 @@ def create_namespace(
     if get_namespace_by_name(db, namespace.name):
         raise ValueError("Namespace already exists")
 
-    db_namespace = models.NameSpace(namespace.model_dump())
+    db_namespace = models.NameSpace(
+        name=namespace.name,
+        description=namespace.description,
+    )
     db.add(db_namespace)
     db.commit()
     db.refresh(db_namespace)
