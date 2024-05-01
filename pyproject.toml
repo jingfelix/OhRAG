@@ -1,11 +1,19 @@
 [project]
 name = "OhRAG"
 version = "0.0.1"
-description = "Default template for PDM package"
+description = "Simple and local-first RAG structure using ollama, pgvector and FastAPI."
 authors = [
     {name = "jingfelix", email = "jingfelix@outlook.com"},
 ]
-dependencies = []
+dependencies = [
+    "pgvector>=0.2.5",
+    "ollama>=0.1.9",
+    "fastapi>=0.110.2",
+    "pydantic-settings>=2.2.1",
+    "sqlalchemy>=2.0.29",
+    "uvicorn>=0.29.0",
+    "psycopg2-binary>=2.9.9",
+]
 requires-python = ">=3.10"
 readme = "README.md"
 license = {text = "MIT"}

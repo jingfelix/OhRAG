@@ -1,7 +1,7 @@
 version: '2'
 services:
   pg:
-    image: postgres:alpine
+    image: pgvector/pgvector:pg16
     volumes:
       - ./data/pg:/var/lib/postgresql/data
     environment:
