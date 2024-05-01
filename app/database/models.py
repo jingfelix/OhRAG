@@ -3,11 +3,11 @@ import datetime
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
     ARRAY,
+    UUID,
     Boolean,
     Column,
     DateTime,
     ForeignKey,
-    Integer,
     String,
     Text,
     create_engine,
@@ -37,6 +37,7 @@ def init_db():
 
     # Create Extension
     session.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+    session.execute(text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"'))
     session.commit()
 
     _Base.metadata.create_all(bind=engine)
@@ -53,7 +54,9 @@ def get_db():
 class Base(_Base):
     __abstract__ = True
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(
+        UUID, primary_key=True, index=True, server_default=text("uuid_generate_v4()")
+    )
     status = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(
@@ -64,15 +67,15 @@ class Base(_Base):
 class NameSpace(Base):
     __tablename__ = "namespace"
 
-    name = Column(String(255), nullable=False)
+    name = Column(String(255), nullable=False, unique=True)
     description = Column(Text, nullable=True)
 
 
 class Document(Base):
     __tablename__ = "document"
 
-    namespace_id = Column(Integer, ForeignKey("namespace.id"), nullable=False)
-    title = Column(String(255), nullable=False)
+    namespace_id = Column(UUID, ForeignKey("namespace.id"), nullable=False)
+    title = Column(String(255), nullable=False, unique=True)
     author = Column(String(255), nullable=True)
     date = Column(DateTime, nullable=False, default=datetime.datetime.now)
     type = Column(String(255), nullable=True)
@@ -83,7 +86,6 @@ class Document(Base):
 class Chunk(Base):
     __tablename__ = "chunk"
 
-    document_id = Column(Integer, ForeignKey("document.id"), nullable=False)
-    chunk_index = Column(Integer, nullable=False)
+    document_id = Column(UUID, ForeignKey("document.id"), nullable=False)
     content = Column(Text, nullable=False)
     embedding = mapped_column(Vector(settings.dimension))

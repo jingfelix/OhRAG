@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import UUID4, BaseModel
 
 
 class NameSpaceBase(BaseModel):
@@ -13,29 +14,35 @@ class NameSpaceCreate(NameSpaceBase):
 
 
 class NameSpace(NameSpaceBase):
-    pass
+    id: UUID4
 
 
 class DocumentBase(BaseModel):
     title: str
     author: Optional[str] = None
-    date: Optional[str] = None
+    date: Optional[datetime] = None
     type: Optional[str] = None
     tags: Optional[list[str]] = None
     raw_content: str
 
 
 class DocumentCreate(DocumentBase):
-    namespace_id: int
-    pass
+    namespace_id: str
+
+
+class Document(DocumentBase):
+    id: UUID4
+    namespace_id: UUID4
 
 
 class ChunkBase(BaseModel):
-    chunk_index: int
     content: str
-    pass
+
+
+class Chunk(ChunkBase):
+    document_id: UUID4
+    embedding: list[float]
 
 
 class ChunkCreate(ChunkBase):
-    document_id: int
-    pass
+    document_id: str
