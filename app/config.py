@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     ollama_host: str = "http://localhost:11434"
     dimension: int = 768  # defualt dimension of nomic-embed-text is 768
     sqlalchemy_database_uri: str = "postgresql://ohrag:ohrag@localhost:25432/ohrag"
+    default_chunk_size: int = 8192
 
     class Config:
         env_file = ".env"

@@ -3,10 +3,12 @@ from sqlalchemy.orm import Session
 from app.database import models, schemas
 
 
+# Universal function to get an item by its id
 def get_item_by_id(db: Session, table: models.Base, _id: str) -> models.Base | None:
     return db.query(table).filter(table.id == _id).first()
 
 
+# namespace CRUD functions
 def get_namespace(db: Session, namespace_id: str) -> models.NameSpace | None:
     return get_item_by_id(db, models.NameSpace, namespace_id)
 
@@ -38,6 +40,7 @@ def create_namespace(
     return db_namespace
 
 
+# document CRUD functions
 def get_document(db: Session, document_id: str) -> models.Document | None:
     return get_item_by_id(db, models.Document, document_id)
 
@@ -73,3 +76,9 @@ def create_document(db: Session, document: schemas.DocumentCreate) -> models.Doc
     db.refresh(db_document)
 
     return db_document
+
+
+# chunk CRUD functions and task functions
+def create_chunks(db: Session, chunks: list[schemas.ChunkBase]) -> int:
+    # TODO: Implement this function
+    return len(chunks)

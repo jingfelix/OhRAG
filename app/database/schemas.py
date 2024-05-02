@@ -44,5 +44,11 @@ class Chunk(ChunkBase):
     embedding: list[float]
 
 
-class ChunkCreate(ChunkBase):
+class ChunkCreate(BaseModel):
     document_id: str
+    loader: str
+    args: Optional[dict[str, str]] = {}
+
+
+class ChunkOut(ChunkCreate):
+    size: int
