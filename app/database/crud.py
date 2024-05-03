@@ -1,5 +1,7 @@
+from ollama import AsyncClient
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.database import models, schemas
 
 
@@ -49,6 +51,14 @@ def get_document_by_title(db: Session, title: str) -> models.Document | None:
     return db.query(models.Document).filter(models.Document.title == title).first()
 
 
+def get_document_by_namespace(db: Session, namespace_id: str) -> list[models.Document]:
+    return (
+        db.query(models.Document)
+        .filter(models.Document.namespace_id == namespace_id)
+        .all()
+    )
+
+
 def get_documents(
     db: Session, skip: int = 0, limit: int = 100
 ) -> list[models.Document]:
@@ -79,6 +89,32 @@ def create_document(db: Session, document: schemas.DocumentCreate) -> models.Doc
 
 
 # chunk CRUD functions and task functions
-def create_chunks(db: Session, chunks: list[schemas.ChunkBase]) -> int:
-    # TODO: Implement this function
+async def create_chunks(
+    db: Session, chunks: list[schemas.ChunkBase], document_id: str
+) -> int:
+    client = AsyncClient(host=settings.ollama_host)
+    for chunk_base in chunks:
+        res = await client.embeddings(
+            model=settings.ollama_embed_model,
+            prompt=chunk_base.content,
+        )
+
+        if not res.get("embedding", None):
+            raise ValueError("Failed to get embedding")
+
+        db_chunk = models.Chunk(
+            document_id=document_id,
+            content=chunk_base.content,
+            embedding=res["embedding"],
+        )
+
+        db.add(db_chunk)
+        db.flush()
+
+    db.commit()
+
     return len(chunks)
+
+
+def get_chunks_by_document(db: Session, document_id: str) -> list[models.Chunk]:
+    return db.query(models.Chunk).filter(models.Chunk.document_id == document_id).all()
