@@ -52,3 +52,7 @@ class ChunkCreate(BaseModel):
 
 class ChunkOut(ChunkCreate):
     size: int
+
+
+class ChunkQuery(ChunkBase):
+    document_id: Optional[str] = None

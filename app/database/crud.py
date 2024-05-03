@@ -1,4 +1,5 @@
 from ollama import AsyncClient
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -118,3 +119,33 @@ async def create_chunks(
 
 def get_chunks_by_document(db: Session, document_id: str) -> list[models.Chunk]:
     return db.query(models.Chunk).filter(models.Chunk.document_id == document_id).all()
+
+
+# Query functions
+async def get_chunks_by_query(
+    db: Session, query: schemas.ChunkQuery
+) -> list[models.Chunk]:
+    # 计算 Query 中的 content 的 embedding
+    client = AsyncClient(host=settings.ollama_host)
+    res = await client.embeddings(
+        model=settings.ollama_embed_model,
+        prompt=query.content,
+    )
+    if not res.get("embedding", None):
+        raise ValueError("Failed to get embedding")
+
+    # 当 document_id 不为空时，在对应 Document 的 Chunk 中搜索
+    # 当 document_id 为空时，在所有 Chunk 中搜索
+
+    # 使用 pgvector 的相似度函数
+    return db.scalars(
+        select(models.Chunk)
+        .filter(
+            models.Chunk.document_id == query.document_id if query.document_id else True
+        )
+        .order_by(models.Chunk.embedding.cosine_distance(res["embedding"]))
+        .filter(
+            models.Chunk.embedding.cosine_distance(res["embedding"]) > 0.5
+        )  # TODO: 需要选择更好的过滤方案
+        .limit(10)
+    ).all()
