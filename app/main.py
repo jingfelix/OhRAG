@@ -14,6 +14,10 @@ def create_app():
     app.include_router(chunk.router)
     app.include_router(query.router)
 
+    from app.exceptions import common
+
+    app.add_exception_handler(ValueError, common.value_error_handler)
+
     return app
 
 
