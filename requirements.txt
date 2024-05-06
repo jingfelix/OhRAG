@@ -26,3 +26,4 @@ sqlalchemy==2.0.29
 starlette==0.37.2
 typing-extensions==4.11.0
 uvicorn==0.29.0
+whatthepatch==1.0.5

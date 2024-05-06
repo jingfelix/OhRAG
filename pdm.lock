@@ -2,10 +2,10 @@
 # It is not intended for manual editing.
 
 [metadata]
-groups = ["default"]
+groups = ["default", "patch"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:408190a1aa069367cdc83faa33e97a4611f64643619ac875442c22487d8fa8bd"
+content_hash = "sha256:d6c6f8ae16eabc6b5a35fbc2dddcd1e2401ec31a90878de8f6e8858ca1c06c50"
 
 [[package]]
 name = "annotated-types"
@@ -501,4 +501,15 @@ dependencies = [
 files = [
     {file = "uvicorn-0.29.0-py3-none-any.whl", hash = "sha256:2c2aac7ff4f4365c206fd773a39bf4ebd1047c238f8b8268ad996829323473de"},
     {file = "uvicorn-0.29.0.tar.gz", hash = "sha256:6a69214c0b6a087462412670b3ef21224fa48cae0e452b5883e8e8bdfdd11dd0"},
+]
+
+[[package]]
+name = "whatthepatch"
+version = "1.0.5"
+requires_python = ">=3.7"
+summary = "A patch parsing and application library."
+groups = ["default"]
+files = [
+    {file = "whatthepatch-1.0.5-py3-none-any.whl", hash = "sha256:6bc41f9f48a63384be4478d8b2d5b22185aac75be853cdcb150a2dc174ede7e1"},
+    {file = "whatthepatch-1.0.5.tar.gz", hash = "sha256:7f374c172812581bc3763587525d14a143aac7fe4220bc4676ecce0d86cb8f08"},
 ]

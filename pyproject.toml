@@ -13,6 +13,7 @@ dependencies = [
     "sqlalchemy>=2.0.29",
     "uvicorn>=0.29.0",
     "psycopg2-binary>=2.9.9",
+    "whatthepatch>=1.0.5",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
