@@ -1,5 +1,5 @@
-from ollama import AsyncClient
-from sqlalchemy import select
+from ollama import Client as OllamaClient
+from sqlalchemy import and_, select
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -90,12 +90,13 @@ def create_document(db: Session, document: schemas.DocumentCreate) -> models.Doc
 
 
 # chunk CRUD functions and task functions
-async def create_chunks(
-    db: Session, chunks: list[schemas.ChunkBase], document_id: str
+def create_chunks(
+    db: Session, chunks: list[schemas.ChunkBase], document_id: str, namespace_id: str
 ) -> int:
-    client = AsyncClient(host=settings.ollama_host)
+    client = OllamaClient(host=settings.ollama_host)
+
     for chunk_base in chunks:
-        res = await client.embeddings(
+        res = client.embeddings(
             model=settings.ollama_embed_model,
             prompt=chunk_base.content,
         )
@@ -105,6 +106,7 @@ async def create_chunks(
 
         db_chunk = models.Chunk(
             document_id=document_id,
+            namespace_id=namespace_id,
             content=chunk_base.content,
             embedding=res["embedding"],
         )
@@ -122,12 +124,12 @@ def get_chunks_by_document(db: Session, document_id: str) -> list[models.Chunk]:
 
 
 # Query functions
-async def get_chunks_by_query(
-    db: Session, query: schemas.ChunkQuery
+def get_chunks_by_query(
+    db: Session, query: schemas.ChunkBase, namespace_id: str, document_id: str
 ) -> list[models.Chunk]:
     # 计算 Query 中的 content 的 embedding
-    client = AsyncClient(host=settings.ollama_host)
-    res = await client.embeddings(
+    client = OllamaClient(host=settings.ollama_host)
+    res = client.embeddings(
         model=settings.ollama_embed_model,
         prompt=query.content,
     )
@@ -141,7 +143,10 @@ async def get_chunks_by_query(
     return db.scalars(
         select(models.Chunk)
         .filter(
-            models.Chunk.document_id == query.document_id if query.document_id else True
+            and_(
+                (models.Chunk.document_id == document_id if document_id else True),
+                (models.Chunk.namespace_id == namespace_id if namespace_id else True),
+            )
         )
         .order_by(models.Chunk.embedding.cosine_distance(res["embedding"]))
         .filter(

@@ -87,5 +87,6 @@ class Chunk(Base):
     __tablename__ = "chunk"
 
     document_id = Column(UUID, ForeignKey("document.id"), nullable=False)
+    namespace_id = Column(UUID, ForeignKey("namespace.id"), nullable=False)
     content = Column(Text, nullable=False)
     embedding = mapped_column(Vector(settings.dimension))

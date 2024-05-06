@@ -30,10 +30,10 @@ def simple_splitter(
             chunk = [line]
             chunk_length = line_length
         else:
-            yield line
+            chunk.append(line)
             chunk_length += line_length
 
-    if chunk != []:  # Add the last chunk if it's not empty
+    if chunk:  # Add the last chunk if it's not empty
         yield "".join(chunk)
 
     return

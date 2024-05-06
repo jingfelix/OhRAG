@@ -29,5 +29,5 @@ async def create_chunk(chunk_create: schemas.ChunkCreate, db=Depends(models.get_
         document_id=chunk_create.document_id,
         loader=chunk_create.loader,
         args=chunk_create.args,
-        size=await crud.create_chunks(db, chunks, document.id),
+        size=crud.create_chunks(db, chunks, document.id, document.namespace_id),
     )
