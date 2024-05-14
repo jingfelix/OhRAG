@@ -5,7 +5,7 @@ from app.database import crud, models, schemas
 router = APIRouter(prefix="/query", tags=["query"])
 
 
-@router.post("/", response_model=list[schemas.ChunkBase])
+@router.post("/", response_model=list[schemas.ChunkQuery])
 async def get_chunks_by_query(
     query: schemas.ChunkBase,
     namespace_id: str = "",
