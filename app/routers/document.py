@@ -11,9 +11,9 @@ async def read_documents(page: int = 0, size: int = 100, db=Depends(get_db)):
     return crud.get_documents(db, page * size, size)
 
 
-@router.get("/{document_title}", response_model=schemas.Document)
-async def read_document(document_title: str, db=Depends(get_db)):
-    return crud.get_document_by_title(db, document_title)
+@router.get("/{document_id}", response_model=schemas.Document)
+async def read_document(document_id: str, db=Depends(get_db)):
+    return crud.get_document(db, document_id)
 
 
 @router.post("/", response_model=schemas.Document)

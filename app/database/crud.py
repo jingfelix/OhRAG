@@ -1,5 +1,5 @@
 from ollama import Client as OllamaClient
-from sqlalchemy import and_, select
+from sqlalchemy import and_, desc, select
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -148,7 +148,7 @@ def get_chunks_by_query(
                 (models.Chunk.namespace_id == namespace_id if namespace_id else True),
             )
         )
-        .order_by(models.Chunk.embedding.cosine_distance(res["embedding"]))
+        .order_by(desc(models.Chunk.embedding.cosine_distance(res["embedding"])))
         .filter(
             models.Chunk.embedding.cosine_distance(res["embedding"]) > 0.5
         )  # TODO: 需要选择更好的过滤方案
