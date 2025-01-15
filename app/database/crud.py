@@ -68,8 +68,8 @@ def get_documents(
 
 
 def create_document(db: Session, document: schemas.DocumentCreate) -> models.Document:
-    if get_document_by_title(db, document.title):
-        raise ValueError("Document already exists")
+    # if get_document_by_title(db, document.title):
+    #     raise ValueError("Document already exists")
 
     if not get_namespace(db, document.namespace_id):
         raise ValueError("Namespace does not exist")
