@@ -75,7 +75,7 @@ class Document(Base):
     __tablename__ = "document"
 
     namespace_id = Column(UUID, ForeignKey("namespace.id"), nullable=False)
-    title = Column(String(255), nullable=False, unique=True)
+    title = Column(String(255), nullable=False, unique=False)
     author = Column(String(255), nullable=True)
     date = Column(DateTime, nullable=False, default=datetime.datetime.now)
     type = Column(String(255), nullable=True)

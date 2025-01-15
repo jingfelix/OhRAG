@@ -27,7 +27,7 @@ class DocumentBase(BaseModel):
 
 
 class DocumentCreate(DocumentBase):
-    namespace_id: str
+    namespace_id: str | UUID4
 
 
 class Document(DocumentBase):

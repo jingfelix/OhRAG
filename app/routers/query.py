@@ -8,8 +8,8 @@ router = APIRouter(prefix="/query", tags=["query"])
 @router.post("/", response_model=list[schemas.ChunkQuery])
 async def get_chunks_by_query(
     query: schemas.ChunkBase,
-    namespace_id: str = "",
-    document_id: str = "",
+    namespace_id: str = None,
+    document_id: str = None,
     db=Depends(models.get_db),
 ):
     if namespace_id:

@@ -1,4 +1,5 @@
 from ollama import Client as OllamaClient
+from pydantic import UUID4
 from sqlalchemy import and_, desc, select
 from sqlalchemy.orm import Session
 
@@ -91,7 +92,10 @@ def create_document(db: Session, document: schemas.DocumentCreate) -> models.Doc
 
 # chunk CRUD functions and task functions
 def create_chunks(
-    db: Session, chunks: list[schemas.ChunkBase], document_id: str, namespace_id: str
+    db: Session,
+    chunks: list[schemas.ChunkBase],
+    document_id: str | UUID4,
+    namespace_id: str | UUID4,
 ) -> int:
     client = OllamaClient(host=settings.ollama_host)
 
@@ -148,9 +152,9 @@ def get_chunks_by_query(
                 (models.Chunk.namespace_id == namespace_id if namespace_id else True),
             )
         )
-        .order_by(desc(models.Chunk.embedding.cosine_distance(res["embedding"])))
+        .order_by(models.Chunk.embedding.cosine_distance(res["embedding"]))
         .filter(
-            models.Chunk.embedding.cosine_distance(res["embedding"]) > 0.5
+            models.Chunk.embedding.cosine_distance(res["embedding"]) < 0.5
         )  # TODO: 需要选择更好的过滤方案
         .limit(10)
     ).all()
